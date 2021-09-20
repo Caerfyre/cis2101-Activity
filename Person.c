@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "Person.h"
+#include "Exercise1.h"
 
 Person createPerson(String name, char sex, String city) {
     Person p;
@@ -16,8 +17,8 @@ Person createPerson(String name, char sex, String city) {
 void displayPersonInfo(Person p) {
     printf("{%s | %c | %s}", p.name, p.sex, p.city);
 }
-
 /////////////////////////////////////////////////////////////////////////////
+
 /* Static Array List*/
 void init_SAL(PersonStaticArrayList *list){
 	list->count = 0;
@@ -479,5 +480,120 @@ void display_CBL(VSpace vs, PersonCusorBasedList list){
 	printf("\n");
 
 }
+/////////////////////////////////////////////////////
 
+/*Circular Array functions*/
+CircularArrayQueue create_array_queue(){
+	CircularArrayQueue caq;
+    int x;
+    for(x=0; x<MAX; ++x) {
 
+        caq.data[x] = createPerson("x", 'x', "x");
+    }
+    caq.front = 0;      
+    caq.rear = MAX-1;  
+
+    return caq;
+}
+
+void init_array_queue(CircularArrayQueue *list){
+	list->front = 6;
+	list->rear = 5;
+}
+
+bool enqueue(CircularArrayQueue *list, Type p){
+	if((list->rear+2)%MAX != list->front){                      
+        list->rear = (list->rear + 1) % MAX;
+        list->data[list->rear] = p;
+        return true;
+    }else{
+    	return false;
+	}
+}
+
+bool dequeue(CircularArrayQueue *list){
+	if((list->rear+1)%MAX != list->front){ 
+		list->front = (list->front + 1) % MAX;
+		return true;
+	}else{
+    	return false;
+	}
+	
+}
+
+bool is_empty(CircularArrayQueue list){
+	return (list.rear+1)%MAX == list.front;
+}
+
+bool is_full(CircularArrayQueue list){
+	return (list.rear+2)%MAX == list.front;
+}
+
+Type front(CircularArrayQueue list){
+	Type x = list.data[list.front];
+	return x;
+}
+/////////////////////////////////////////////////////
+
+/*Exercise 1 Functions*/
+
+int get_queue_length(CircularArrayQueue list){
+	int cnt=0;
+	if(is_empty(list)){
+		return cnt;
+	}else{
+		for( ; list.front != (list.rear + 1)%MAX; list.front = (list.front + 1) % MAX) {
+        	cnt++;
+   		}
+    	return cnt;
+	}
+	
+}
+
+PersonLinkedList get_all_females(CircularArrayQueue list){
+	PersonNode *femalesLL = NULL;
+	if(!is_empty(list))
+	for( ; list.front != (list.rear + 1)%MAX; list.front = (list.front + 1) % MAX) {
+        	if(list.data[list.front].sex == 'F'){
+        		insert_first_LL(&femalesLL, front(list));
+			}
+   		}
+	return femalesLL;
+}
+
+PersonDynamicArrayList remove_all_males(CircularArrayQueue *list){
+	PersonDynamicArrayList malesLL;
+	
+	for( ; list->front != (list->rear + 1)%MAX; list->front = (list->front + 1) % MAX) {
+        	if(list->data[list->front].sex == 'M'){
+        		dequeue(*(&list));
+        		insert_last_DAL(&malesLL, list->data[list->front]);
+			}
+   		}
+	return malesLL;
+	
+}
+/////////////////////////////////////////////////////////////
+
+/*DISPLAY QUEUE - not included*/
+
+void visualizeQueue(CircularArrayQueue list) {
+    int i;
+    for(i=0; i<MAX; ++i) {
+        displayPersonInfo(list.data[i]);
+    }
+    printf("\n");
+    for(i=0; i<MAX; ++i) {
+        printf("%5d", i);
+    }
+    printf("\n");
+    printf("Front: %d\nRear: %d\n\n", list.front, list.rear);
+}
+
+void displayList(CircularArrayQueue list) {
+    printf("{");
+    for( ; list.front != (list.rear + 1)%MAX; list.front = (list.front + 1) % MAX) {
+        displayPersonInfo(list.data[list.front]);
+    }
+    printf("}\n\n");
+}
